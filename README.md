@@ -11,7 +11,6 @@ raspberry-pi-telegram-bot-guide-v1_2/
 ├─ .env.example
 ├─ docs/
 │  ├─ raspberry_pi_telegram_bot_guide_en_v1_2.pdf
-│  └─ raspberry_pi_telegram_bot_guide_de_v1_2.pdf
 └─ examples/
    ├─ basic_echo_bot.py
    ├─ instant_notes_bot.py
@@ -24,7 +23,6 @@ raspberry-pi-telegram-bot-guide-v1_2/
 ## Guides
 
 - English PDF: `docs/raspberry_pi_telegram_bot_guide_en_v1_2.pdf`
-- German PDF: `docs/raspberry_pi_telegram_bot_guide_de_v1_2.pdf`
 
 ## What it covers
 
