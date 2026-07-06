@@ -1,0 +1,17 @@
+[Unit]
+Description=Raspberry Pi Telegram Bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/telegram-bot
+EnvironmentFile=/home/pi/telegram-bot/.env
+ExecStart=/home/pi/telegram-bot/venv/bin/python /home/pi/telegram-bot/bot.py
+Restart=always
+RestartSec=10
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target

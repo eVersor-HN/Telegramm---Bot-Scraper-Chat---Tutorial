@@ -1,0 +1,531 @@
+<html><head><meta charset='utf-8'><style>
+@page { size: A4; margin: 13mm 11mm 13mm 11mm; @bottom-right { content: counter(page); font-size: 8pt; color: #64748b; } }
+* { box-sizing: border-box; }
+body { font-family: Arial, Helvetica, sans-serif; color: #172033; background: #fff; font-size: 9.1pt; line-height: 1.33; }
+h1,h2,h3 { margin: 0; }
+.cover { min-height: 260mm; padding: 16mm 12mm; background: linear-gradient(135deg,#ffffff 0%,#f6fbff 55%,#f7f3ff 100%); border: 1.5pt solid #c7d2fe; position: relative; }
+.cover:before { content: ''; position:absolute; left:0; top:0; width:7mm; height:100%; background: linear-gradient(#00b8d4,#7c3aed); }
+.cover h1 { font-size: 35pt; line-height: .95; letter-spacing: -1.2pt; color: #111827; margin-left: 4mm; white-space: pre-line; }
+.subtitle { font-size: 12pt; color:#475569; margin: 6mm 0 10mm 4mm; font-weight:700; }
+.cover-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin: 8mm 0 0 4mm; }
+.panel { border:1pt solid #dbe4f0; background:#ffffffcc; padding: 5mm; border-radius: 5mm; }
+.panel h3 { color:#4338ca; font-size:10.5pt; margin-bottom:2mm; }
+ul { margin: 1mm 0 0 5mm; padding:0; }
+li { margin: 1.1mm 0; }
+.section { page-break-inside: avoid; margin: 0 0 5.2mm 0; padding: 4.5mm 5mm 4mm 5mm; border: 1pt solid #dbeafe; border-left: 4pt solid #06b6d4; border-radius: 4mm; background:#fbfdff; }
+.section h2 { font-size: 15.3pt; letter-spacing: -.3pt; color:#0f172a; }
+.kicker { color:#0891b2; font-size:8.1pt; font-weight:700; text-transform: uppercase; letter-spacing:.8pt; margin-bottom:1mm; }
+p { margin: 2.2mm 0; }
+.grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top:3mm; }
+.mini { background:#fff; border:1pt solid #e2e8f0; border-radius:3mm; padding:3.2mm; }
+.mini h3 { color:#4f46e5; font-size:9pt; margin-bottom:1mm; }
+pre { white-space: pre-wrap; word-wrap: break-word; background:#0f172a; color:#e2e8f0; border-left: 4pt solid #22d3ee; padding: 3.2mm; border-radius: 3mm; font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-size: 7.15pt; line-height: 1.18; margin: 2mm 0 0 0; }
+.code-title { font-size:7.8pt; color:#475569; font-weight:700; margin: 3mm 0 1mm 0; text-transform: uppercase; letter-spacing:.5pt; }
+table { width: 100%; border-collapse: collapse; margin: 2.2mm 0; font-size: 7.7pt; }
+th { background:#e0f2fe; color:#0f172a; text-align:left; }
+th, td { border: .6pt solid #dbeafe; padding: 1.45mm 1.6mm; vertical-align: top; }
+.note { background:#fff7ed; border-left: 3pt solid #f59e0b; padding: 2.3mm 3mm; margin-top: 3mm; font-size:8.1pt; }
+.faq { columns: 2; column-gap: 5mm; }
+.qa { break-inside: avoid; border: .7pt solid #e2e8f0; border-radius: 3mm; padding: 2mm; margin: 0 0 2.4mm 0; background:#fff; }
+.qa b { color:#4338ca; }
+.source { font-size: 8pt; margin-bottom: 1.5mm; }
+.hr { height: 1px; background:#cbd5e1; margin: 4mm 0; }
+</style></head><body>
+<div class='cover'><h1>RASPBERRY PI
+TELEGRAM BOT
+ANLEITUNG</h1><div class='subtitle'>Deutsche Ausgabe // einsteigerfreundlicher Bot-Knoten</div><div class='cover-grid'><div class='panel'><h3>Build</h3><ul><li>Telegram BotFather</li><li>Python bot</li><li>SQLite notes</li><li>PuTTY workflow</li></ul></div><div class='panel'><h3>Operate</h3><ul><li>systemd autostart</li><li>restart after crash</li><li>reboot recovery</li><li>backup and restore</li></ul></div></div><div class='hr'></div><p style='margin-left:4mm;max-width:165mm'>Light corporate cyberpunk edition // v1.2 // copy/paste-first tutorial for beginners.</p></div>
+<div class='section'>
+<div class='kicker'>Was am Ende laufen soll</div>
+<h2>Ziel der Anleitung</h2>
+<p>Ein zuverlaessiger Telegram-Bot auf einem Raspberry Pi: BotFather-Token, Python-Bot, SQLite-Notizen, Backup-Dateien, PuTTY-Workflow, systemd-Autostart, Reboot-Recovery und optionale lokale KI. Die Anleitung nutzt komplette Copy/Paste-Bloecke.</p>
+<table>
+<tr><th>Ebene</th><th>Auswahl</th><th>Warum</th></tr>
+<tr><td>Telegram</td><td>BotFather-Token</td><td>Offizieller Weg zur Bot-Erstellung</td></tr>
+<tr><td>Host</td><td>Raspberry Pi 3/4/5</td><td>Sparsamer Always-on-Linux-Knoten</td></tr>
+<tr><td>Runtime</td><td>Python venv</td><td>Saubere Abhaengigkeiten</td></tr>
+<tr><td>Service</td><td>systemd</td><td>Autostart und Neustart nach Fehlern</td></tr>
+<tr><td>Storage</td><td>SQLite</td><td>Einfache lokale Datenbank</td></tr>
+<tr><td>KI optional</td><td>Ollama</td><td>Erst nach stabilem Basis-Bot</td></tr>
+</table>
+</div>
+<div class='section'>
+<div class='kicker'>Copy/Paste ohne Chaos</div>
+<h2>So benutzt du die Anleitung</h2>
+<p>Arbeite in Etappen. Einen Block einfuegen, Ausgabe lesen, dann weiter. In PuTTY sollte das Fenster bei Fehlern offen bleiben.</p>
+<div class='grid2'>
+<div class='mini'><h3>Regel 1</h3><p>Bei Fehlern stoppen und Logs lesen.</p></div>
+<div class='mini'><h3>Regel 2</h3><p>Echten Token niemals in GitHub posten. Nur in .env speichern.</p></div>
+<div class='mini'><h3>Regel 3</h3><p>Bei Aenderungen: sichern, kompilieren, Service neu starten.</p></div>
+</div>
+<div class='code-title'>PuTTY einrichten</div><pre># Windows: download PuTTY from the official PuTTY website.
+# Start PuTTY, then fill in:
+Host Name: raspberrypi.local
+Port: 22
+Connection type: SSH
+
+# Recommended PuTTY setting:
+Window -&gt; Behaviour -&gt; Close window on exit -&gt; Never
+Session -&gt; Save</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Pi 3 / Pi 4 / Pi 5</div>
+<h2>Hardware-Uebersicht</h2>
+<p>Ein normaler Telegram-Bot ist leicht. Lokale KI ist schwer.</p>
+<table>
+<tr><th>Host</th><th>Bot</th><th>Local AI</th><th>Comment</th></tr>
+<tr><td>Pi 3 / 3 B+</td><td>Yes</td><td>No LLM</td><td>Commands, notes, sensors</td></tr>
+<tr><td>Pi 4 2GB</td><td>Yes</td><td>No LLM / 0.5B only</td><td>Service node</td></tr>
+<tr><td>Pi 4 4GB</td><td>Yes</td><td>0.5B Q4, 1.5B slow</td><td>Short prompts</td></tr>
+<tr><td>Pi 4 8GB</td><td>Yes</td><td>0.5B-1.5B, 3B experimental</td><td>Best Pi 4</td></tr>
+<tr><td>Pi 5 4GB</td><td>Strong</td><td>0.5B-1.5B</td><td>Fast bot</td></tr>
+<tr><td>Pi 5 8GB</td><td>Recommended</td><td>1.5B-3B</td><td>Best normal choice</td></tr>
+<tr><td>Pi 5 16GB</td><td>Best Pi</td><td>3B-4B, 7B slow</td><td>Most RAM</td></tr>
+</table>
+</div>
+<div class='section'>
+<div class='kicker'>Ollama und Huihui-Beispiele</div>
+<h2>Lokale KI einschaetzen</h2>
+<p>Ein Telegram-Bot soll schnell antworten. Lokale KI besser hinter Befehle legen.</p>
+<table>
+<tr><th>Model size</th><th>Pi 4 4GB</th><th>Pi 4 8GB</th><th>Pi 5 8GB</th><th>Pi 5 16GB</th></tr>
+<tr><td>0.5B Q4</td><td>Usable</td><td>Usable</td><td>Smooth</td><td>Smooth</td></tr>
+<tr><td>1.5B Q4</td><td>Slow</td><td>Usable</td><td>Good</td><td>Good</td></tr>
+<tr><td>3B Q4</td><td>Avoid</td><td>Slow</td><td>Usable</td><td>Good</td></tr>
+<tr><td>4B Q4/Q5</td><td>Avoid</td><td>Avoid/slow</td><td>Borderline</td><td>Usable</td></tr>
+<tr><td>7B Q4</td><td>Avoid</td><td>Avoid</td><td>Slow</td><td>Possible</td></tr>
+</table>
+<div class='code-title'>Optionale Ollama-Tests</div><pre># Optional. Do this only after the base bot is reliable.
+curl -fsSL https://ollama.com/install.sh | sh
+ollama --version
+ollama run qwen2.5:0.5b
+ollama run qwen2.5:1.5b
+ollama run qwen2.5:3b
+
+# Huihui examples - check current tags on ollama.com/huihui_ai first.
+ollama run huihui_ai/phi4-mini-abliterated
+ollama run huihui_ai/qwen3-abliterated</pre>
+<div class='note'>Aktuelle Modell-Tags auf Ollama vor dem Veröffentlichen pruefen.</div>
+</div>
+<div class='section'>
+<div class='kicker'>Telegram-Bot erstellen</div>
+<h2>BotFather</h2>
+<p>In Telegram @BotFather suchen, neuen Bot erstellen und Token spaeter in .env eintragen.</p>
+<div class='code-title'>BotFather-Befehle</div><pre>/newbot
+
+# Display name example:
+Raspi Node Bot
+
+# Username example. It must end in bot:
+raspi_node_demo_bot
+
+/setcommands
+start - boot message
+status - service health
+last - show recent notes
+files - export backup files
+help - command list</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Headless-Grundlage</div>
+<h2>Raspberry Pi OS flashen</h2>
+<p>Mit Raspberry Pi Imager. Raspberry Pi OS Lite 64-bit reicht.</p>
+<div class='code-title'>Erster Login</div><pre># Windows PowerShell / macOS Terminal / Linux Terminal:
+ssh pi@raspberrypi.local
+
+# If .local does not resolve, use the IP address from your router:
+ssh pi@192.168.1.50</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Pi erreichbar?</div>
+<h2>Erster Check</h2>
+<p>Nach dem SSH-Login kurz Identitaet, IP und Uptime pruefen.</p>
+<div class='code-title'>Identity check</div><pre>whoami
+hostname
+hostname -I
+uname -a
+uptime</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Python, venv, Projektordner</div>
+<h2>Basis installieren</h2>
+<p>Erstellt ~/telegram-bot und installiert Python-Abhaengigkeiten.</p>
+<div class='code-title'>Pakete und venv</div><pre>sudo apt update
+sudo apt full-upgrade -y
+sudo apt install -y python3-venv python3-pip sqlite3 git curl nano ca-certificates
+
+mkdir -p ~/telegram-bot
+cd ~/telegram-bot
+python3 -m venv venv
+./venv/bin/python -m pip install --upgrade pip
+./venv/bin/pip install python-telegram-bot==22.8</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Token ohne Hardcoding</div>
+<h2>.env erstellen</h2>
+<p>Der Bot liest BOT_TOKEN aus .env.</p>
+<div class='code-title'>Create .env</div><pre>cd ~/telegram-bot
+cat &gt; .env &lt;&lt;&#x27;ENVFILE&#x27;
+BOT_TOKEN=PASTE_BOTFATHER_TOKEN_HERE
+BOT_NAME=raspi-node
+ENVFILE
+
+chmod 600 .env
+ls -l .env</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Sofortige Notizen, Status, Datei-Export</div>
+<h2>Allgemeiner Bot-Code</h2>
+<p>Generischer Code: normale Nachrichten werden sofort gespeichert.</p>
+<div class='code-title'>bot.py schreiben</div><pre>cd ~/telegram-bot
+cat &gt; bot.py &lt;&lt;&#x27;BOTPY&#x27;
+import json
+import os
+import re
+import sqlite3
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
+
+BASE = Path(__file__).resolve().parent
+DB_FILE = BASE / &quot;bot.db&quot;
+ENV_FILE = BASE / &quot;.env&quot;
+BACKUP_DIR = BASE / &quot;backups&quot;
+TZ = ZoneInfo(&quot;Europe/Berlin&quot;)
+
+def load_env():
+    if not ENV_FILE.exists():
+        return
+    for line in ENV_FILE.read_text(encoding=&quot;utf-8&quot;, errors=&quot;ignore&quot;).splitlines():
+        line = line.strip()
+        if not line or line.startswith(&quot;#&quot;) or &quot;=&quot; not in line:
+            continue
+        key, value = line.split(&quot;=&quot;, 1)
+        os.environ.setdefault(key.strip(), value.strip().strip(&#x27;&quot;&#x27;).strip(&quot;&#x27;&quot;))
+
+def now_local():
+    return datetime.now(TZ)
+
+def clean_text(text):
+    text = str(text or &quot;&quot;).strip()
+    text = re.sub(r&quot;\s+&quot;, &quot; &quot;, text)
+    for before, after in {&quot; ,&quot;: &quot;,&quot;, &quot; .&quot;: &quot;.&quot;, &quot; !&quot;: &quot;!&quot;, &quot; ?&quot;: &quot;?&quot;}.items():
+        text = text.replace(before, after)
+    return text.strip()
+
+def db():
+    con = sqlite3.connect(DB_FILE)
+    con.row_factory = sqlite3.Row
+    return con
+
+def init_db():
+    con = db()
+    cur = con.cursor()
+    cur.execute(&quot;&quot;&quot;
+        CREATE TABLE IF NOT EXISTS notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_at TEXT NOT NULL,
+            text TEXT NOT NULL
+        )
+    &quot;&quot;&quot;)
+    con.commit()
+    con.close()
+
+def add_note(text):
+    text = clean_text(text)
+    if not text:
+        raise ValueError(&quot;empty note&quot;)
+    con = db()
+    cur = con.cursor()
+    cur.execute(&quot;INSERT INTO notes (created_at, text) VALUES (?, ?)&quot;, (now_local().isoformat(timespec=&quot;seconds&quot;), text))
+    note_id = cur.lastrowid
+    con.commit()
+    con.close()
+    return note_id
+
+def get_last(limit=10):
+    con = db()
+    rows = con.execute(&quot;SELECT id, created_at, text FROM notes ORDER BY id DESC LIMIT ?&quot;, (limit,)).fetchall()
+    con.close()
+    return list(reversed(rows))
+
+def format_notes(rows):
+    if not rows:
+        return &quot;VAULT.EMPTY // no notes stored&quot;
+    return &quot;\n&quot;.join(f&quot;- #{r[&#x27;id&#x27;]} {r[&#x27;text&#x27;]}&quot; for r in rows)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        &quot;[RASPI.BOT]\nNODE ONLINE // send normal text to store a note\n\n&quot;
+        &quot;/status - health check\n/last - latest notes\n/files - export backups\n/help - command list&quot;
+    )
+
+async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    con = db()
+    total = con.execute(&quot;SELECT COUNT(*) AS c FROM notes&quot;).fetchone()[&quot;c&quot;]
+    con.close()
+    await update.message.reply_text(f&quot;STATUS // ONLINE\nSTORED // {total} notes&quot;)
+
+async def last(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    limit = 10
+    if context.args:
+        try:
+            limit = max(1, min(50, int(context.args[0])))
+        except ValueError:
+            limit = 10
+    await update.message.reply_text(&quot;[LATEST]\n&quot; + format_notes(get_last(limit)))
+
+async def files(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    BACKUP_DIR.mkdir(exist_ok=True)
+    stamp = now_local().strftime(&quot;%Y%m%d-%H%M%S&quot;)
+    txt = BACKUP_DIR / f&quot;notes-{stamp}.txt&quot;
+    jsonl = BACKUP_DIR / f&quot;notes-{stamp}.jsonl&quot;
+    rows = get_last(100000)
+    txt.write_text(format_notes(rows) + &quot;\n&quot;, encoding=&quot;utf-8&quot;)
+    with jsonl.open(&quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+        for r in rows:
+            f.write(json.dumps(dict(r), ensure_ascii=False) + &quot;\n&quot;)
+    await update.message.reply_text(&quot;FILE.NODE // exporting backup files&quot;)
+    await update.message.reply_document(document=txt.open(&quot;rb&quot;), filename=txt.name)
+    await update.message.reply_document(document=jsonl.open(&quot;rb&quot;), filename=jsonl.name)
+
+async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await start(update, context)
+
+async def store_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = clean_text(update.message.text)
+    if not text:
+        await update.message.reply_text(&quot;INTAKE.REJECTED // empty message&quot;)
+        return
+    note_id = add_note(text)
+    await update.message.reply_text(f&quot;[LOGGED]\n- #{note_id} {text}&quot;)
+
+def main():
+    load_env()
+    token = os.environ.get(&quot;BOT_TOKEN&quot;, &quot;&quot;).strip()
+    if not token:
+        raise RuntimeError(&quot;BOT_TOKEN missing in .env&quot;)
+    init_db()
+    app = Application.builder().token(token).build()
+    app.add_handler(CommandHandler(&quot;start&quot;, start))
+    app.add_handler(CommandHandler(&quot;help&quot;, help_cmd))
+    app.add_handler(CommandHandler(&quot;status&quot;, status))
+    app.add_handler(CommandHandler(&quot;last&quot;, last))
+    app.add_handler(CommandHandler(&quot;files&quot;, files))
+    app.add_handler(MessageHandler(filters.TEXT &amp; ~filters.COMMAND, store_text))
+    app.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+BOTPY</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Vor systemd testen</div>
+<h2>Manueller Test</h2>
+<p>Den Bot zuerst manuell starten.</p>
+<div class='code-title'>Manueller Test</div><pre>cd ~/telegram-bot
+./venv/bin/python -m py_compile bot.py
+./venv/bin/python bot.py
+
+# Stop the manual run with Ctrl+C after the Telegram test works.</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Autostart nach Neustart und Stromausfall</div>
+<h2>Als Service installieren</h2>
+<p>systemd startet den Bot beim Booten und nach Absturz neu.</p>
+<div class='code-title'>Service erstellen und aktivieren</div><pre>sudo tee /etc/systemd/system/telegram-bot.service &gt; /dev/null &lt;&lt;&#x27;SERVICE&#x27;
+[Unit]
+Description=Raspberry Pi Telegram Bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/telegram-bot
+EnvironmentFile=/home/pi/telegram-bot/.env
+ExecStart=/home/pi/telegram-bot/venv/bin/python /home/pi/telegram-bot/bot.py
+Restart=always
+RestartSec=10
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
+sudo systemctl daemon-reload
+sudo systemctl enable telegram-bot
+sudo systemctl start telegram-bot
+systemctl status telegram-bot --no-pager -l</pre>
+<div class='note'>Wenn dein User nicht pi heisst, User=pi und /home/pi ersetzen.</div>
+</div>
+<div class='section'>
+<div class='kicker'>Nachweisen, dass er wiederkommt</div>
+<h2>Reboot- und Stromausfalltest</h2>
+<p>Ein Service ist erst vertrauenswuerdig, wenn ein Reboot-Test funktioniert.</p>
+<div class='code-title'>Reboot-Recovery-Test</div><pre># Test normal reboot recovery:
+sudo reboot
+
+# Reconnect after 30-90 seconds:
+ssh pi@raspberrypi.local
+
+# Check whether the bot came back automatically:
+systemctl status telegram-bot --no-pager -l
+journalctl -u telegram-bot -n 80 --no-pager</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Wenn etwas nicht laeuft</div>
+<h2>Logs und Reparatur</h2>
+<p>Nicht raten. status und journalctl nutzen.</p>
+<div class='code-title'>Service-Logs</div><pre>systemctl status telegram-bot --no-pager -l
+journalctl -u telegram-bot -n 120 --no-pager
+journalctl -u telegram-bot -f</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Fuer Einsteiger ohne nano</div>
+<h2>Sicher per Copy/Paste aendern</h2>
+<p>Service stoppen, Backup, ersetzen oder patchen, kompilieren, neu starten.</p>
+<div class='code-title'>Komplette Datei sicher ersetzen</div><pre>cd ~/telegram-bot
+sudo systemctl stop telegram-bot
+cp bot.py bot.py.bak-$(date +%Y%m%d-%H%M%S)
+cat &gt; bot.py &lt;&lt;&#x27;BOTPY&#x27;
+# paste the complete new bot.py here
+BOTPY
+./venv/bin/python -m py_compile bot.py
+sudo systemctl start telegram-bot
+systemctl status telegram-bot --no-pager -l</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Text aendern oder Befehl hinzufuegen</div>
+<h2>Kleine Code-Aenderungen</h2>
+<p>Kleine Patches fuer kleine Aenderungen.</p>
+<div class='grid2'>
+<div class='mini'><h3>Kleiner Patch</h3><p>Fuer Textaenderungen.</p></div>
+<div class='mini'><h3>Komplett ersetzen</h3><p>Sicherer bei groesseren Aenderungen.</p></div>
+</div>
+<div class='code-title'>Antworttext patchen</div><pre>cd ~/telegram-bot
+cp bot.py bot.py.bak-text-change-$(date +%Y%m%d-%H%M%S)
+python3 - &lt;&lt;&#x27;PY&#x27;
+from pathlib import Path
+p = Path(&#x27;bot.py&#x27;)
+s = p.read_text(encoding=&#x27;utf-8&#x27;)
+s = s.replace(&#x27;NODE ONLINE // send normal text to store a note&#x27;, &#x27;NODE ONLINE // intake ready&#x27;)
+p.write_text(s, encoding=&#x27;utf-8&#x27;)
+PY
+./venv/bin/python -m py_compile bot.py &amp;&amp; sudo systemctl restart telegram-bot</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Minimalmuster fuer Commands</div>
+<h2>Befehle erweitern</h2>
+<p>Jeder Befehl braucht async-Funktion plus CommandHandler.</p>
+<div class='code-title'>/ping hinzufuegen</div><pre># Add this function above main():
+async def ping(update, context):
+    await update.message.reply_text(&quot;PONG // node alive&quot;)
+
+# Then add this handler inside main(), near the other handlers:
+app.add_handler(CommandHandler(&quot;ping&quot;, ping))
+
+# Check and restart:
+./venv/bin/python -m py_compile bot.py &amp;&amp; sudo systemctl restart telegram-bot</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Einer SD-Karte nicht blind vertrauen</div>
+<h2>Backup und Restore</h2>
+<p>Projektordner und Datenbank sichern.</p>
+<div class='code-title'>Ordner sichern und wiederherstellen</div><pre># Create a local backup archive:
+cd ~
+tar -czf telegram-bot-backup-$(date +%Y%m%d-%H%M%S).tar.gz telegram-bot
+ls -lh telegram-bot-backup-*.tar.gz | tail
+
+# Restore an archive:
+cd ~
+sudo systemctl stop telegram-bot
+mv telegram-bot telegram-bot.bad-$(date +%Y%m%d-%H%M%S)
+tar -xzf telegram-bot-backup-YYYYMMDD-HHMMSS.tar.gz
+sudo systemctl start telegram-bot</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Symptome zu Befehlen</div>
+<h2>Troubleshooting-Karte</h2>
+<p>Erst diese Seite nutzen.</p>
+<table>
+<tr><th>Symptom</th><th>Likely cause</th><th>Command</th></tr>
+<tr><td>Bot silent</td><td>Service down</td><td>systemctl status telegram-bot</td></tr>
+<tr><td>Token error</td><td>Bad .env</td><td>check .env carefully</td></tr>
+<tr><td>Delayed replies</td><td>Slow handler/network</td><td>journalctl -u telegram-bot -f</td></tr>
+<tr><td>PuTTY closes</td><td>Session exits</td><td>Close window on exit = Never</td></tr>
+<tr><td>Duplicate replies</td><td>Two bots running</td><td>ps -ef | grep python</td></tr>
+<tr><td>Database error</td><td>Schema mismatch</td><td>sqlite3 bot.db .schema</td></tr>
+<tr><td>No autostart</td><td>Service not enabled</td><td>systemctl is-enabled telegram-bot</td></tr>
+</table>
+<div class='code-title'>Vollcheck</div><pre>cd ~/telegram-bot
+./venv/bin/python -m py_compile bot.py
+systemctl is-enabled telegram-bot
+systemctl is-active telegram-bot
+systemctl status telegram-bot --no-pager -l | head -n 60
+journalctl -u telegram-bot -n 80 --no-pager</pre>
+</div>
+<div class='section'>
+<div class='kicker'>Vor GitHub oder Dauerbetrieb</div>
+<h2>Sicherheitscheck</h2>
+<p>Telegram-Tokens sind Zugangsdaten.</p>
+<div class='code-title'>Rechte pruefen</div><pre>cd ~/telegram-bot
+ls -lah
+ls -l .env bot.py bot.db 2&gt;/dev/null
+chmod 600 .env
+chmod 644 bot.py</pre>
+</div>
+<div class='section'><h2>FAQ</h2><div class='faq'>
+<div class='qa'><b>Brauche ich einen Raspberry Pi 5?</b><br>Nein. Fuer einen einfachen Telegram-Bot reichen Pi 3 oder Pi 4. Pi 5 lohnt sich fuer mehr Automatisierung oder lokale KI-Tests.</div>
+<div class='qa'><b>Startet der Bot nach Stromausfall wieder?</b><br>Ja, wenn der systemd-Service aktiviert ist und der Pi normal bootet.</div>
+<div class='qa'><b>Warum systemd?</b><br>systemd startet den Bot beim Booten, startet ihn nach Abstuerzen neu und liefert Logs ueber journalctl.</div>
+<div class='qa'><b>Was ist BotFather?</b><br>BotFather ist der offizielle Telegram-Bot zum Erstellen und Verwalten eigener Bots.</div>
+<div class='qa'><b>Wo kommt der Token hin?</b><br>In die Datei .env, nie direkt in bot.py und nie in GitHub.</div>
+<div class='qa'><b>Kann ich PuTTY nutzen?</b><br>Ja. Fuer Windows ist PuTTY sehr praktisch. Setze Close window on exit auf Never.</div>
+<div class='qa'><b>Warum schliesst sich PuTTY?</b><br>Meist beendet sich die Shell. Aendere die PuTTY-Einstellung oder nutze Bloecke ohne exit.</div>
+<div class='qa'><b>Kann ich die Bloecke direkt kopieren?</b><br>Ja. Vorher Platzhalter wie BOT_TOKEN und Username ersetzen.</div>
+<div class='qa'><b>Kann ich ohne nano bearbeiten?</b><br>Ja. Nutze komplette heredoc-Dateibloecke oder kleine Python-Patches.</div>
+<div class='qa'><b>Was wenn der Bot nicht antwortet?</b><br>Pruefe systemctl status und journalctl, dann Service neu starten.</div>
+<div class='qa'><b>Was wenn /today oder /last stark verzoegert ist?</b><br>Keine langsame KI im normalen Message-Handler nutzen. Erst speichern, spaeter auswerten.</div>
+<div class='qa'><b>Kann lokale KI jede Notiz klassifizieren?</b><br>Technisch ja, praktisch auf dem Pi oft zu langsam. Besser per explizitem Befehl.</div>
+<div class='qa'><b>Welche Datenbank wird genutzt?</b><br>SQLite. Einfach, lokal, ohne extra Server.</div>
+<div class='qa'><b>Kann ich den Bot oeffentlich betreiben?</b><br>Der Bot ist ueber Telegram erreichbar. SSH nicht offen ins Internet legen, wenn du es nicht absichern kannst.</div>
+<div class='qa'><b>Kann ich mehrere Bots betreiben?</b><br>Ja, aber mit getrennten Ordnern, Services und BotFather-Tokens.</div>
+<div class='qa'><b>Was passiert bei zwei Prozessen mit gleichem Token?</b><br>Es kann Polling-Konflikte geben. Doppelte Services stoppen.</div>
+<div class='qa'><b>Wie finde ich laufende Python-Bots?</b><br>Mit ps -ef | grep -i python und systemctl list-units.</div>
+<div class='qa'><b>Wie update ich Code sicher?</b><br>Service stoppen, Datei sichern, Code ersetzen, py_compile, Service starten.</div>
+<div class='qa'><b>Was ist drop_pending_updates?</b><br>Alte Telegram-Updates werden beim Start verworfen.</div>
+<div class='qa'><b>Kann der Bot Dateien senden?</b><br>Ja. Das Beispiel /files exportiert Backups als TXT und JSONL.</div>
+<div class='qa'><b>Kann ich Backups auf dem Pi behalten?</b><br>Ja, aber zusaetzlich extern kopieren. SD-Karten fallen aus.</div>
+<div class='qa'><b>Soll ich eine SSD nutzen?</b><br>Fuer dauerhaften Betrieb ist SSD robuster als billige microSD.</div>
+<div class='qa'><b>Ist WLAN okay?</b><br>Ja, fuer viele Bots. Ethernet ist stabiler.</div>
+<div class='qa'><b>Garantiert network-online.target dauerhaft Internet?</b><br>Nein. Es wartet nur beim Start. Spaetere Netzabbrueche muss der Bot vertragen.</div>
+<div class='qa'><b>Was wenn Telegram nicht erreichbar ist?</b><br>Der Service startet neu und sollte sich erholen, sobald das Netz wieder da ist.</div>
+<div class='qa'><b>Welcher Pi ist fuer lokale KI am besten?</b><br>Pi 5 mit 8GB oder 16GB. Trotzdem bleibt es CPU-limitiert.</div>
+<div class='qa'><b>Welche Modelle sind realistisch?</b><br>0.5B bis 3B quantisiert sind praktisch. 4B geht eher auf Pi 5 16GB. 7B ist nicht fluessig.</div>
+<div class='qa'><b>Kann ich Huihui-Modelle nutzen?</b><br>Ja, aber aktuelle Tags pruefen und klein testen. Abliterated-Modelle privat und beaufsichtigt nutzen.</div>
+<div class='qa'><b>Brauche ich Docker?</b><br>Nein. Diese Anleitung nutzt Python direkt und systemd.</div>
+<div class='qa'><b>Geht Raspberry Pi OS Desktop?</b><br>Ja, aber Lite braucht weniger Ressourcen.</div>
+<div class='qa'><b>Wie aendere ich den Bot-Namen?</b><br>In BotFather aendern und Text in bot.py anpassen.</div>
+<div class='qa'><b>Wie fuege ich Befehle hinzu?</b><br>Async-Funktion schreiben und mit CommandHandler registrieren.</div>
+<div class='qa'><b>Warum py_compile?</b><br>Es findet Syntaxfehler vor dem Neustart.</div>
+<div class='qa'><b>Welche Lizenz passt?</b><br>Wenn jeder alles frei nutzen darf, ist CC0 am einfachsten.</div>
+<div class='qa'><b>Kann ich das Repo veroeffentlichen?</b><br>Ja, solange keine Tokens, Datenbanken, Chat-IDs oder privaten Logs enthalten sind.</div>
+<div class='qa'><b>Was teste ich am Ende?</b><br>Manueller Start, Telegram-Antwort, systemd-Start, Reboot, Logs und Backup-Export.</div>
+</div></div>
+<div class='section'><h2>Quellen und Referenzen</h2>
+<div class='source'><b>Telegram Bot tutorial / BotFather</b><br>https://core.telegram.org/bots/tutorial</div>
+<div class='source'><b>BotFather profile and management entry</b><br>https://telegram.me/BotFather</div>
+<div class='source'><b>python-telegram-bot documentation</b><br>https://docs.python-telegram-bot.org/en/stable/</div>
+<div class='source'><b>Raspberry Pi SSH remote access documentation</b><br>https://www.raspberrypi.com/documentation/configuration/ssh/remote-access.html</div>
+<div class='source'><b>Raspberry Pi 3 Model B+ product page</b><br>https://www.raspberrypi.com/products/raspberry-pi-3-model-b-plus/</div>
+<div class='source'><b>Raspberry Pi 4 Model B specifications</b><br>https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/</div>
+<div class='source'><b>Raspberry Pi 5 product page</b><br>https://www.raspberrypi.com/products/raspberry-pi-5/</div>
+<div class='source'><b>systemd network-online guidance</b><br>https://systemd.io/NETWORK_ONLINE/</div>
+<div class='source'><b>Ollama documentation</b><br>https://docs.ollama.com/</div>
+<div class='source'><b>Ollama Huihui phi4-mini abliterated model page</b><br>https://ollama.com/huihui_ai/phi4-mini-abliterated</div>
+<div class='source'><b>Ollama Huihui qwen3 abliterated model page</b><br>https://ollama.com/huihui_ai/qwen3-abliterated</div>
+</div>
+</body></html>

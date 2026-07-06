@@ -1,0 +1,1 @@
+Practical multi-language Raspberry Pi Telegram bot guide with copy/paste setup blocks, PuTTY workflow, systemd autostart, recovery, examples and local AI notes.
